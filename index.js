@@ -116,6 +116,7 @@ bot.onText(/Next lesson/, async (msg) => {
     const chatId = msg.chat.id;
     await bot.deleteMessage(chatId, msg.message_id.toString())
 
+    const user = msg.from
     const currentLesson = await getCurrentLesson(chatId);
     console.log(`Next lesson ${currentLesson} for user`, { username: user.username, first_name: user.first_name, last_name: user.last_name });
     const files = await getFilesForLesson(currentLesson);
