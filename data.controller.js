@@ -71,8 +71,9 @@ async function getCurrentLesson(chatId) {
     const {rows} = await db.query(`
         SELECT current_lesson
         FROM chats_lesson
+        WHERE chat_id = $1
         LIMIT 1
-    `);
+    `, [chatId]);
     if (rows.length === 0) {
         return 1;
     }
