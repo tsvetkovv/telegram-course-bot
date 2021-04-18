@@ -20,7 +20,7 @@ const bot = new TelegramBot(TOKEN, getOptions());
 // This informs the Telegram servers of the new webhook.
 // Note: we do not need to pass in the cert, as it already provided
 if (process.env.WEBHOOK) {
-    const url = process.env.APP_URL;
+    const url = process.env.APP_URL || `https://${process.env.HEROKU_APP_NAME}.herokuapp.com:443`;
     if (!url) {
         throw new Error('APP_URL is not defined')
     }
