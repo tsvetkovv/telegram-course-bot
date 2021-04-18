@@ -36,9 +36,8 @@ bot.on('message', async (msg) => {
     if ((await checkAdmin(chatId)) && (msg.audio || msg.document)) {
         try {
             await uploadFileFromUser(msg.audio || msg.document);
-            await bot.sendMessage(chatId, 'Uploaded');
         } catch (e) {
-            await bot.sendMessage(chatId, 'Something went wrong');
+            await bot.sendMessage(chatId, 'Something went wrong', { disable_notification: true });
             console.error(e.stack);
         }
     }
