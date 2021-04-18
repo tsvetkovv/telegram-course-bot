@@ -33,7 +33,11 @@ pool.connect(async (err, client, done) => {
 });
 
 module.exports = {
-    query: (text, params) => pool.query(text, params),
+    async query(text, params) {
+        const res = await pool.query(text, params);
+        console.log('executed query', { text, rows: res.rowCount })
+        return res
+    },
 };
 
 async function init() {

@@ -52,6 +52,7 @@ async function checkAdmin(chatId) {
  */
 async function uploadFileFromUser({file_name, title = null, file_id, mime_type}) {
     const lesson = parseLesson(file_name);
+    console.log(`Uploading file ${file_name} for lesson ${lesson}`)
     return await db.query(`
         WITH add_file as (
             INSERT INTO files
