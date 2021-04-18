@@ -105,7 +105,6 @@ bot.onText(/\/allow_(\d+)/, async (msg, match) => {
                 one_time_keyboard: false,
             }
         });
-        await bot.setMyCommands([{ command: 'Next lesson', description: ''}]);
     }
 })
 
