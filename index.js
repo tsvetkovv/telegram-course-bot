@@ -49,7 +49,8 @@ bot.onText(/\/start/, async (msg) => {
     if (await checkUserExists(chatId)) {
         return
     }
-
+    const user = msg.from;
+    console.log('New user', { username: user.username, first_name: user.first_name, last_name: user.last_name });
     let admin = false;
     if (process.env.ADMIN_USERNAMES) {
         const admins = process.env.ADMIN_USERNAMES.split(',');
@@ -111,10 +112,12 @@ bot.onText(/Next lesson/, async (msg) => {
     if (!(await checkAccess(msg.chat.id))) {
         return;
     }
+
     const chatId = msg.chat.id;
     await bot.deleteMessage(chatId, msg.message_id.toString())
 
     const currentLesson = await getCurrentLesson(chatId);
+    console.log(`Next lesson ${currentLesson} for user`, { username: user.username, first_name: user.first_name, last_name: user.last_name });
     const files = await getFilesForLesson(currentLesson);
     if (files.length > 0) {
         const options = {

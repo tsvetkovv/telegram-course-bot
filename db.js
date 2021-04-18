@@ -35,7 +35,6 @@ pool.connect(async (err, client, done) => {
 module.exports = {
     async query(text, params) {
         const res = await pool.query(text, params);
-        console.log('executed query', { text, rows: res.rowCount })
         return res
     },
 };
