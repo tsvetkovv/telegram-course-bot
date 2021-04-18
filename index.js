@@ -56,38 +56,33 @@ bot.onText(/\/start/, async (msg) => {
         const admins = process.env.ADMIN_USERNAMES.split(',');
         admin = admins.some(a => a === msg.from.username);
     }
-
-    await db.query(`
+    const username = msg.from.username
+        ? '@' + msg.from.username
+        : msg.from.first_name + ' ' + msg.from.last_name
+     await db.query(`
             INSERT INTO chats (id, user_id, username, admin)
             VALUES ($1, $2, $3, $4)
             `, [
         chatId, msg.from.id, msg.from.username, admin
     ]);
     if (!admin) {
-        await bot.sendMessage(msg.chat.id, 'Please request access', {
+        const {rows: admins} = await db.query('SELECT id FROM chats WHERE admin = true');
+        await admins.reduce(
+            (p, admin) =>
+                p.then(_ => bot.sendMessage(
+                    admin.id,
+                    `New user id=${msg.from.id} ${username} requested an access. /allow_${msg.chat.id}`,
+
+                )),
+            Promise.resolve()
+        );
+        await bot.sendMessage(msg.chat.id, 'The access request has been sent. Please wait for approval', {
             reply_markup: {
-                keyboard: [
-                    [{text: 'Request access'}]
-                ],
-                resize_keyboard: true,
+                remove_keyboard: true
             }
         });
     }
 });
-
-bot.onText(/Request access/, async (msg) => {
-    const {rows: admins} = await db.query('SELECT id FROM chats WHERE admin = true');
-    await admins.reduce(
-        (p, admin) =>
-            p.then(_ => bot.sendMessage(admin.id, `@${msg.from.username} requested an access. /allow_${msg.chat.id}`)),
-        Promise.resolve()
-    );
-    await bot.sendMessage(msg.chat.id, 'The request has been sent. Please wait for approval', {
-        reply_markup: {
-            remove_keyboard: true
-        }
-    });
-})
 
 bot.onText(/\/allow_(\d+)/, async (msg, match) => {
     if (!(await checkAdmin(msg.chat.id))) {
@@ -100,16 +95,17 @@ bot.onText(/\/allow_(\d+)/, async (msg, match) => {
         WHERE id = $1
         RETURNING username, id
 `, [chatIdToAllow]);
-    if (rows && rows[0] && rows[0].username) {
-        await bot.sendMessage(msg.chat.id, `@${rows[0].username} allowed`);
-        await bot.sendMessage(rows[0].id, `You are allowed to use bot`, {
+    if (rows && rows[0]) {
+        const userId = rows[0].id;
+        await bot.sendMessage(msg.chat.id, `User with id=${userId} is  allowed`);
+        await bot.sendMessage(userId, `You are allowed to use bot`, {
             reply_markup: {
                 keyboard: [[{text: 'Next lesson'}]],
                 resize_keyboard: true,
                 one_time_keyboard: false,
             }
         });
-
+        await bot.setMyCommands([{ command: 'Next lesson', description: ''}]);
     }
 })
 
