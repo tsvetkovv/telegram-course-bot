@@ -83,7 +83,7 @@ async function getCurrentLesson(chatId) {
 
 /**
  * @param {number} lesson
- * @return {Promise<{file_id: number, mime_type: string}[]>}
+ * @return {Promise<{file_id: string, mime_type: string}[]>}
  */
 async function getFilesForLesson(lesson) {
     const res = await db.query(`
