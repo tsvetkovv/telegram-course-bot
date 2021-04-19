@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "",
+  "author": "Tsvetkovv",
   "license": "ISC",
   "dependencies": {
     "node-telegram-bot-api": "^0.52.0",
